@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="DigitaleDeltaModels">
+            <EntityType Name="Reference">
+                <Key>
+                    <PropertyRef Name="Id" />
+                </Key>
+                <Property Name="Id" Type="Edm.String" Nullable="false" />
+                <Property Name="Type" Type="Edm.String" />
+                <Property Name="Organisation" Type="Edm.String" />
+                <Property Name="Code" Type="Edm.String" Nullable="false" />
+                <Property Name="Geography" Type="Edm.Geography" />
+                <Property Name="Description" Type="Edm.String" Nullable="false" />
+                <Property Name="Files" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Associated files" />
+                </Property>
+                <Property Name="Weighting" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Relative weight of the measurement object" />
+                </Property>
+                <Property Name="Start" Type="Edm.DateTimeOffset">
+                    <Annotation Term="Core.Description" String="Start date of project" />
+                </Property>
+                <Property Name="End" Type="Edm.DateTimeOffset">
+                    <Annotation Term="Core.Description" String="Endt date of project" />
+                </Property>
+                <Property Name="MaxValue" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Maximum value of unit" />
+                </Property>
+                <Property Name="MinValue" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Minimum value of unit" />
+                </Property>
+                <Property Name="MeasurementObjects" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Measurement objects withing the monitoring network" />
+                </Property>
+                <Property Name="Literature" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Taxon literature" />
+                </Property>
+                <Property Name="AreaType" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Area type" />
+                </Property>
+                <Property Name="IsReportingMeasurementObject" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Is reporting point to another measurement object" />
+                </Property>
+                <Property Name="ParameterType" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="ParameterType" />
+                </Property>
+                <Property Name="TaxonType" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="TaxonType" />
+                </Property>
+                <Property Name="TaxonGroup" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="TaxonGroup" />
+                </Property>
+                <Property Name="TaxonRank" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="TaxonRank" />
+                </Property>
+                <Property Name="TaxonAuthors" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="TaxonAuthors" />
+                </Property>
+                <Property Name="TaxonNameNl" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="TaxonNameNl" />
+                </Property>
+                <Property Name="CasNumber" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="CasNumber" />
+                </Property>
+                <Property Name="Symbol" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Symbol" />
+                </Property>
+            </EntityType>
+            <EntityType Name="Observation">
+                <Key>
+                    <PropertyRef Name="Id" />
+                </Key>
+                <Property Name="Id" Type="Edm.String" Nullable="false" />
+                <Property Name="Type" Type="Edm.String" Nullable="false" />
+                <Property Name="ResultTime" Type="Edm.DateTimeOffset" Nullable="false" />
+                <Property Name="PhenomenonTime" Type="DigitaleDeltaModels.TmPeriod" Nullable="false" />
+                <Property Name="ValidTime" Type="DigitaleDeltaModels.TmPeriod" />
+                <Property Name="ResultOf" Type="Edm.String" />
+                <Property Name="Parameter" Type="DigitaleDeltaModels.ParameterContainer" Nullable="false" />
+                <Property Name="Metadata" Type="DigitaleDeltaModels.MetadataContainer" />
+                <Property Name="Result" Type="DigitaleDeltaModels.Result" />
+                <Property Name="Foi" Type="DigitaleDeltaModels.Foi" />
+                <Property Name="RelatedObservations" Type="Collection(DigitaleDeltaModels.RelatedObservation)" />
+            </EntityType>
+            <ComplexType Name="TmPeriod">
+                <Property Name="BeginPosition" Type="Edm.DateTimeOffset" />
+                <Property Name="EndPosition" Type="Edm.DateTimeOffset" />
+            </ComplexType>
+            <ComplexType Name="Foi">
+                <Property Name="FoiId" Type="Edm.String" Nullable="false" />
+                <Property Name="Code" Type="Edm.String" Nullable="false" />
+                <Property Name="Description" Type="Edm.String" Nullable="false" />
+                <Property Name="Geography" Type="Edm.Geography" />
+                <Property Name="KrwCode" Type="Edm.String" />
+                <Property Name="MonitoringNetworks" Type="Collection(Edm.String)" />
+            </ComplexType>
+            <ComplexType Name="ParameterContainer">
+                <Property Name="Parameter" Type="Edm.String" />
+                <Property Name="Compartment" Type="Edm.String" />
+                <Property Name="Quantity" Type="Edm.String" />
+                <Property Name="Organisation" Type="Edm.String" />
+                <Property Name="OrganisationNamespace" Type="Edm.String" />
+                <Property Name="EcotopeSystem" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Ecotope system" />
+                </Property>
+                <Property Name="WaterSystem" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="KRW Watertype" />
+                </Property>
+                <Property Name="TaxonAuthors" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Taxon authors" />
+                </Property>
+                <Property Name="MonitoringNetworks" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Monitoring networks" />
+                </Property>
+                <Property Name="CasNumber" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="CAS Registry Number" />
+                </Property>
+                <Property Name="TaxonRank" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Taxon rank" />
+                </Property>
+                <Property Name="TaxonType" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Taxon type" />
+                </Property>
+                <Property Name="TaxonNameNl" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Taxon name in Dutch" />
+                </Property>
+                <Property Name="TaxonGroup" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Group of the taxon" />
+                </Property>
+                <Property Name="ParameterType" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Parameter type" />
+                </Property>
+                <Property Name="LengthClass" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Length class" />
+                </Property>
+                <Property Name="MeasurementPackage" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Measurement package" />
+                </Property>
+                <Property Name="GrainSizeFraction" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Grain size fraction" />
+                </Property>
+                <Property Name="Behaviour" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Behaviour" />
+                </Property>
+                <Property Name="Analyst" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Analyst" />
+                </Property>
+                <Property Name="Capacity" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Capacity" />
+                </Property>
+                <Property Name="MeasurementPosition" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Measurement position" />
+                </Property>
+                <Property Name="GrainDiameter" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Grain diameter" />
+                </Property>
+                <Property Name="Sampler" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Sampling organisation" />
+                </Property>
+                <Property Name="SamplingMethod" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Sampling method" />
+                </Property>
+                <Property Name="Supplier" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Data supplier" />
+                </Property>
+                <Property Name="AnalysisMethod" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Analysis method" />
+                </Property>
+                <Property Name="LifeForm" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Life form" />
+                </Property>
+                <Property Name="SizeClassLengthInMm" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Size classification in millimeters for length" />
+                </Property>
+                <Property Name="ValuationTechnique" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Valuation method" />
+                </Property>
+                <Property Name="ValueProcessingMethod" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Value processing method" />
+                </Property>
+                <Property Name="Appearance" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Appearance" />
+                </Property>
+                <Property Name="Completeness" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Completeness (of the result)" />
+                </Property>
+                <Property Name="SizeClassLengthInCm" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Size classification in centimeters for length" />
+                </Property>
+                <Property Name="Sediment" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Sediment" />
+                </Property>
+                <Property Name="LifeStage" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Life stage" />
+                </Property>
+                <Property Name="Purpose" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Purpose of the observation" />
+                </Property>
+                <Property Name="SizeClassWidthInMm" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Size classification in millimeters for width" />
+                </Property>
+                <Property Name="Habitat" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Habitat" />
+                </Property>
+                <Property Name="ProjectMethod" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Project specific method used" />
+                </Property>
+                <Property Name="Statistic" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Statistic" />
+                </Property>
+                <Property Name="Condition" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Condition" />
+                </Property>
+                <Property Name="RecordingMethod" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Recording method" />
+                </Property>
+                <Property Name="AnalysisPackage" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Analysis package" />
+                </Property>
+                <Property Name="Gender" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Gender" />
+                </Property>
+                <Property Name="Source" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Source" />
+                </Property>
+            </ComplexType>
+            <ComplexType Name="MetadataContainer">
+                <Property Name="ModifiedOn" Type="Edm.DateTimeOffset" />
+                <Property Name="CollectionComment" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Opmerking bij een collectie" />
+                </Property>
+                <Property Name="SetComment" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Opmerking bij een meetset" />
+                </Property>
+                <Property Name="ObservationComment" Type="Edm.String">
+                    <Annotation Term="Core.Description" String="Opmerking bij de observatie" />
+                </Property>
+                <Property Name="Projects" Type="Collection(Edm.String)">
+                    <Annotation Term="Core.Description" String="Projecten voor welke deze observatie is uitgevoerd" />
+                </Property>
+                <Property Name="SamplingDeviceMeshSize" Type="Edm.String"/>
+                <Property Name="SamplingDeviceLength" Type="Edm.String"/>
+                <Property Name="SamplingDeviceSpecification" Type="Edm.String"/>
+                <Property Name="BaseValue" Type="Edm.Decimal"/>
+                <Property Name="BaseUnit" Type="Edm.String"/>
+            </ComplexType>
+            <ComplexType Name="Result">
+                <Property Name="ResultId" Type="Edm.String" Nullable="false" />
+                <Property Name="Truth" Type="Edm.Boolean" />
+                <Property Name="Count" Type="Edm.Int64" />
+                <Property Name="Measure" Type="DigitaleDeltaModels.Measure" />
+                <Property Name="Vocab" Type="DigitaleDeltaModels.CategoryVerb" />
+            </ComplexType>
+            <ComplexType Name="Measure">
+                <Property Name="Uom" Type="Edm.String" Nullable="false" />
+                <Property Name="Value" Type="Edm.Decimal" Scale="variable" />
+                <Property Name="Namespace" Type="Edm.String" />
+            </ComplexType>
+            <ComplexType Name="CategoryVerb">
+                <Property Name="Vocabulary" Type="Edm.String" Nullable="false" />
+                <Property Name="Term" Type="Edm.String" Nullable="false" />
+            </ComplexType>
+            <ComplexType Name="RelatedObservation">
+                <Property Name="ObservationId" Type="Edm.String" Nullable="false" />
+                <Property Name="Role" Type="Edm.String" Nullable="false" />
+            </ComplexType>
+        </Schema>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="System.Collections.Generic">
+            <ComplexType Name="KeyValuePair_2OfString_Uri" />
+        </Schema>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Default">
+            <Function Name="intersects" IsBound="true">
+                <Parameter Name="bindingParameter" Type="DigitaleDeltaModels.Reference" />
+                <Parameter Name="wkt" Type="Edm.String" />
+                <ReturnType Type="Edm.Boolean" Nullable="false" />
+            </Function>
+            <Function Name="intersects" IsBound="true">
+                <Parameter Name="bindingParameter" Type="DigitaleDeltaModels.Observation" />
+                <Parameter Name="wkt" Type="Edm.String" />
+                <ReturnType Type="Edm.Boolean" Nullable="false" />
+            </Function>
+            <Function Name="distance" IsBound="true">
+                <Parameter Name="bindingParameter" Type="DigitaleDeltaModels.Reference" />
+                <Parameter Name="wkt" Type="Edm.String" />
+                <ReturnType Type="Edm.Double" Nullable="false" />
+            </Function>
+            <Function Name="distance" IsBound="true">
+                <Parameter Name="bindingParameter" Type="DigitaleDeltaModels.Observation" />
+                <Parameter Name="wkt" Type="Edm.String" />
+                <ReturnType Type="Edm.Double" Nullable="false" />
+            </Function>
+            <Function Name="network" IsBound="true">
+                <Parameter Name="bindingParameter" Type="DigitaleDeltaModels.Reference" />
+                <Parameter Name="name" Type="Edm.String" />
+                <ReturnType Type="Edm.Boolean" Nullable="false" />
+            </Function>
+            <Function Name="network" IsBound="true">
+                <Parameter Name="bindingParameter" Type="DigitaleDeltaModels.Observation" />
+                <Parameter Name="name" Type="Edm.String" />
+                <ReturnType Type="Edm.Boolean" Nullable="false" />
+            </Function>
+            <EntityContainer Name="Container">
+                <EntitySet Name="references" EntityType="DigitaleDeltaModels.Reference">
+                    <Annotation Term="Org.ODataTranslator.Capabilities.V1.SortRestrictions">
+                        <Record>
+                            <PropertyValue Property="Sortable" Bool="true" />
+                            <PropertyValue Property="AscendingOnlyProperties">
+                                <Collection />
+                            </PropertyValue>
+                            <PropertyValue Property="DescendingOnlyProperties">
+                                <Collection />
+                            </PropertyValue>
+                            <PropertyValue Property="NonSortableProperties">
+                                <Collection>
+                                    <PropertyPath>Geography</PropertyPath>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                    </Annotation>
+                </EntitySet>
+                <EntitySet Name="observations" EntityType="DigitaleDeltaModels.Observation">
+                </EntitySet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

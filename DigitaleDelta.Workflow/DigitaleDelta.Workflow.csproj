@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DigitaleDelta.Contracts\DigitaleDelta.Contracts.csproj" />
+      <ProjectReference Include="..\DigitaleDelta.CsdlParser\DigitaleDelta.CsdlParser.csproj" />
+      <ProjectReference Include="..\DigitaleDelta.ODataTranslator\DigitaleDelta.ODataTranslator.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="DigitaleDelta3.xml" />
+      <Content Include="DigitaleDelta3.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+    </ItemGroup>
+
+</Project>
