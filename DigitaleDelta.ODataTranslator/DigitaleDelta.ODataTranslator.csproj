@@ -34,6 +34,10 @@
     <ItemGroup>
       <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
       <PackageReference Include="GeoAPI" Version="1.7.5" />
+      <PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="NetTopologySuite" Version="2.6.0" />
       <PackageReference Include="NetTopologySuite.Features" Version="2.2.0" />
       <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
