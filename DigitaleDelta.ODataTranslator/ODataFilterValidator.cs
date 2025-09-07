@@ -120,7 +120,7 @@ public class ODataFilterValidator(CsdlModel csdlModel, IEnumerable<ODataFunction
                     var value = argument.GetText().Trim('\'', '"');
                     if (value != "m" && value != "d")
                     {
-                        return (false, $"Invalid unit '{value}' for distance. Allowed: 'm' (meters), 'd' (degrees).");
+                        return (false, $"Invalid unit '{value}' for distance. Allowed: 'm' (meters), 'y' (yards), 'd' (degrees).");
                     }
                 }
 

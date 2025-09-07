@@ -138,6 +138,12 @@ public static class CrsHelper
         }
 	};
 
+	/// <summary>
+	/// Transform geometry
+	/// </summary>
+	/// <param name="toId">Target SRID</param>
+	/// <param name="geometry">Geometry to transform</param>
+	/// <returns></returns>
 	public static (bool result, Geometry? transformedGeometry) TransformGeometry(int toId, Geometry geometry)
 	{
 		if (!SupportedCrs.TryGetValue(toId, out var targetWkt))
@@ -153,6 +159,13 @@ public static class CrsHelper
 		return (true, transformedGeometry);
 	}
 
+	/// <summary>
+	/// Transforms geometry
+	/// </summary>
+	/// <param name="fromId">Source SRID</param>
+	/// <param name="toId">TargetSRId</param>
+	/// <param name="geometry">Geometry to convert</param>
+	/// <returns></returns>
 	public static (bool result, Geometry? transformedGeometry) TransformGeometry(int fromId, int toId, Geometry geometry)
 	{
 		if (!SupportedCrs.TryGetValue(toId, out var targetWkt))
@@ -217,6 +230,11 @@ public static class CrsHelper
 		throw new NotSupportedException("Geometry type not supported");
 	}
 
+	/// <summary>
+	/// Validate content CRS
+	/// </summary>
+	/// <param name="contentCrs">CRS to validate</param>
+	/// <returns></returns>
 	public static int? ValidateContentCrs(string? contentCrs)
 	{
 		if (string.IsNullOrEmpty(contentCrs))

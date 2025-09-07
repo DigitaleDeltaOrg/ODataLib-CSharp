@@ -17,6 +17,12 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
 {
     private readonly Dictionary<string, object> _parameters = [];
     private int _parameterCount;
+    
+    /// <summary>
+    /// SQL Result: a combination of the query and its parameters
+    /// </summary>
+    /// <param name="Sql">SQL statement</param>
+    /// <param name="Parameters">Parameters</param>
     public record SqlResult(string Sql, IReadOnlyDictionary<string, object> Parameters);
     
     /// <summary>
@@ -71,11 +77,9 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
 
         if ((arguments.Length == 0) && functionMap.ExpectedArgumentTypes.Count == 0)
         {
-            // zero-arg functie; retourneer zoals gedefinieerd
             var zeroArgSql = functionMap.SqlFunctionFormat.Replace("@srid", srid.ToString());
-            // Als ReturnType boolean is, maak er een predicate van
-            if (!string.IsNullOrWhiteSpace(functionMap.ReturnType) &&
-                functionMap.ReturnType.Equals("Edm.Boolean", StringComparison.OrdinalIgnoreCase))
+            
+            if (!string.IsNullOrWhiteSpace(functionMap.ReturnType) && functionMap.ReturnType.Equals("Edm.Boolean", StringComparison.OrdinalIgnoreCase))
             {
                 return (true, null, $"(({zeroArgSql}) = 1)");
             }
@@ -94,7 +98,6 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
 
         var sqlFunction = string.Format(functionMap.SqlFunctionFormat.Replace("@srid", srid.ToString()), arguments.Cast<object>().ToArray());
 
-        // Als de functie een boolean ReturnType heeft, vertaal naar predicate door = 1 toe te voegen
         if (!string.IsNullOrWhiteSpace(functionMap.ReturnType) &&
             functionMap.ReturnType.Equals("Edm.Boolean", StringComparison.OrdinalIgnoreCase))
         {
@@ -181,7 +184,6 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
     {
         if (context.IN() != null)
         {
-            // Process the left side (property)
             var leftExpr = context.filterExpr(0);
             var leftResult = TryConvertFilterExpressionToSql(leftExpr);
 
@@ -199,9 +201,8 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
         {
             var function     = context.function();
             var functionName = function.Start.Text;
-
-            // Zoek functionMap eerst om verwachte arg-count te kennen
             var functionMap = functionMaps.FirstOrDefault(f => string.Equals(f.ODataFunctionName, functionName, StringComparison.OrdinalIgnoreCase));
+
             if (functionMap == null)
             {
                 return (false, string.Format(ErrorMessages.unknownFunction, functionName), null);
@@ -212,24 +213,32 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
                 .ToArray();
             var argumentQueries = arguments.Select(arg => arg.SqlQuery).ToArray();
 
-            // Fallback ALLEEN wanneer exact 1 arg verwacht wordt en er 0 geparsed zijn
-            if (argumentQueries.Length == 0 && functionMap.ExpectedArgumentTypes.Count == 1)
+            if (argumentQueries.Length != 0 || functionMap.ExpectedArgumentTypes.Count != 1)
             {
-                var raw = function.GetText(); // bv. distance('POINT(1 1)')
-                var lParen = raw.IndexOf('(');
-                var rParen = raw.LastIndexOf(')');
-                if (lParen >= 0 && rParen > lParen + 1)
-                {
-                    var inner = raw.Substring(lParen + 1, rParen - lParen - 1).Trim();
-                    if (!string.IsNullOrWhiteSpace(inner) && inner.IsLiteralValue())
-                    {
-                        var handled = HandleLiteral(inner);
-                        if (handled.Success && !string.IsNullOrEmpty(handled.SqlQuery))
-                        {
-                            argumentQueries = new[] { handled.SqlQuery };
-                        }
-                    }
-                }
+                return TryGetFunctionMap(functionName, argumentQueries);
+            }
+            
+            var raw = function.GetText(); // bv. distance('POINT(1 1)')
+            var lParen = raw.IndexOf('(');
+            var rParen = raw.LastIndexOf(')');
+
+            if (lParen < 0 || rParen <= lParen + 1)
+            {
+                return TryGetFunctionMap(functionName, argumentQueries);
+            }
+            
+            var inner = raw.Substring(lParen + 1, rParen - lParen - 1).Trim();
+                
+            if (string.IsNullOrWhiteSpace(inner) || !inner.IsLiteralValue())
+            {
+                return TryGetFunctionMap(functionName, argumentQueries);
+            }
+                
+            var handled = HandleLiteral(inner);
+            
+            if (handled.Success && !string.IsNullOrEmpty(handled.SqlQuery))
+            {
+                argumentQueries = [handled.SqlQuery];
             }
 
             return TryGetFunctionMap(functionName, argumentQueries);
@@ -238,6 +247,7 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
         if (context.filterExpr().Length == 1 && context.NOT() != null)
         {
             var inner = TryConvertFilterExpressionToSql(context.filterExpr(0));
+            
             return (true, null, $"NOT ({inner.SqlQuery})");
         }
 
@@ -279,9 +289,7 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
             // Special handling for NULL comparisons
             if (right.SqlQuery?.ToLower() == "'null'")
             {
-#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
                 return operatorSymbol.ToLowerInvariant() switch
-#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
                 {
                     "eq" => (true, null, $"{left.SqlQuery} IS NULL"),
                     "ne" => (true, null, $"{left.SqlQuery} IS NOT NULL")
@@ -299,7 +307,6 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
             var right           = TryConvertFilterExpressionToSql(context.filterExpr(1));
             var logicalOperator = context.AND() != null ? "AND" : "OR";
 
-            // Add parentheses only if the sub-expression contains another logical operator
             var leftQuery = context.filterExpr(0).AND() != null || context.filterExpr(0).OR() != null
                 ? $"({left.SqlQuery})"
                 : left.SqlQuery;
@@ -313,7 +320,6 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
 
         var innerExpression = TryConvertFilterExpressionToSql(context.filterExpr(0));
 
-        // Retain explicit parentheses
         return (true, null, $"({innerExpression.SqlQuery})");
     }
     
@@ -356,7 +362,6 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
                 continue;
             }
 
-            // Split the combined string into individual values
             var values = text.Split([","], StringSplitOptions.RemoveEmptyEntries).ToList();
 
             foreach (var value in values)
@@ -378,6 +383,11 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
         return (true, null, $"{leftSql} IN ({string.Join(",", parameterNames)})");
     }
     
+    /// <summary>
+    /// Get parameter type for property
+    /// </summary>
+    /// <param name="propertyName">Property by name</param>
+    /// <returns></returns>
     private string GetParameterTypeForProperty(string propertyName)
     {
         var map = propertyMaps.FirstOrDefault(m => string.Equals(m.ODataPropertyName, propertyName, StringComparison.OrdinalIgnoreCase));
@@ -433,6 +443,7 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
     private static bool LooksLikeWktLiteral(string s)
     {
         var t = UnwrapQuotes(s).TrimStart();
+        
         return t.StartsWith("POINT", StringComparison.OrdinalIgnoreCase)
                || t.StartsWith("LINESTRING", StringComparison.OrdinalIgnoreCase)
                || t.StartsWith("POLYGON", StringComparison.OrdinalIgnoreCase)
@@ -443,6 +454,7 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
     private static string UnwrapQuotes(string s)
     {
         s = s.Trim();
+        
         return (s.Length >= 2 && ((s[0] == '\'' && s[^1] == '\'') || (s[0] == '\"' && s[^1] == '\"')))
             ? s.Substring(1, s.Length - 2)
             : s;
@@ -451,36 +463,65 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
     private object ExtractParameterValue(string? sqlQuery)
     {
         if (string.IsNullOrEmpty(sqlQuery))
+        {
             throw new ArgumentNullException(nameof(sqlQuery));
+        }
 
-        // If it's a parameter (e.g., @p1), look it up
         if (sqlQuery[0] == parameterPrefix && _parameters.TryGetValue(sqlQuery, out var value))
+        {
             return value;
+        }
 
-        // Otherwise, try to parse as a literal
         if (double.TryParse(sqlQuery, out var d))
+        {
             return d;
+        }
 
-        // Remove quotes if present
         return UnwrapQuotes(sqlQuery);
     }
     
+    /// <summary>
+    /// Convert distance (degrees) to meters if needed
+    /// </summary>
+    /// <param name="threshold"></param>
+    /// <param name="unit"></param>
+    /// <returns></returns>
     private static object ConvertDistanceToMetersIfNeeded(object threshold, object unit)
     {
-        if (unit is string s)
+        const double metersPerDegree = 111320.0;
+        const double yardsPerDegree = 121693;
+        
+        if (unit is not string s)
         {
-            if (s.Equals("m", StringComparison.OrdinalIgnoreCase))
+            return threshold;
+        }
+        
+        if (s.Equals("m", StringComparison.OrdinalIgnoreCase))
+        {
+            if (threshold is double d)
             {
-                if (threshold is double d)
-                    return d / 111320.0;
-                if (double.TryParse(threshold.ToString(), out var parsed))
-                    return parsed / 111320.0;
+                return d / metersPerDegree;
             }
-            if (s.Equals("d", StringComparison.OrdinalIgnoreCase))
+
+            if (double.TryParse(threshold.ToString(), out var parsed))
             {
-                return threshold;
+                return parsed / metersPerDegree;
             }
         }
+        
+        if (s.Equals("y", StringComparison.OrdinalIgnoreCase))
+        {
+            if (threshold is double d)
+            {
+                return d / yardsPerDegree;
+            }
+
+            if (double.TryParse(threshold.ToString(), out var parsed))
+            {
+                return parsed / yardsPerDegree;
+            }
+        }
+        
         return threshold;
     }
 }

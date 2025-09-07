@@ -3,6 +3,9 @@
 
 namespace DigitaleDelta.ODataTranslator.Helpers;
 
+/// <summary>
+/// Shared helper for translator
+/// </summary>
 public static class SharedHelper
 {
     /// <summary>
@@ -35,6 +38,12 @@ public static class SharedHelper
         return DigitaleDeltaEdmType.edmString;
     }
     
+
+    /// <summary>
+    /// Determines is the value is a literal.
+    /// </summary>
+    /// <param name="segment">segment to parse</param>
+    /// <returns></returns>
     public static bool IsLiteralValue(this string segment)
     {
         // Check if the segment is a string literal
