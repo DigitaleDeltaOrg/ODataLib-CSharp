@@ -218,7 +218,7 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
                 return TryGetFunctionMap(functionName, argumentQueries);
             }
             
-            var raw = function.GetText(); // bv. distance('POINT(1 1)')
+            var raw = function.GetText(); 
             var lParen = raw.IndexOf('(');
             var rParen = raw.LastIndexOf(')');
 
@@ -260,10 +260,7 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
             if (left.SqlQuery != null && left.SqlQuery.Contains("distance", StringComparison.OrdinalIgnoreCase))
             {
                 var threshold = ExtractParameterValue(right.SqlQuery);
-                var unitExpr = context.filterExpr(0).function().filterExpr(1);
-                var unitResult = TryConvertFilterExpressionToSql(unitExpr);
-                var unitValue = ExtractParameterValue(unitResult.SqlQuery);
-                var converted = ConvertDistanceToMetersIfNeeded(threshold, unitValue);
+                var converted = ConvertDistanceToMetersIfNeeded(threshold, srid);
 
                 // If right.SqlQuery is a parameter, update its value
                 if (!string.IsNullOrEmpty(right.SqlQuery) && right.SqlQuery[0] == parameterPrefix && _parameters.ContainsKey(right.SqlQuery))
@@ -273,11 +270,6 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
                 else
                 {
                     right = (right.Success, right.ErrorMessage, CreateParameter(converted));
-                }
-                
-                if (!string.IsNullOrEmpty(unitResult.SqlQuery) && unitResult.SqlQuery[0] == parameterPrefix)
-                {
-                    _parameters.Remove(unitResult.SqlQuery);
                 }
             }
             
@@ -484,44 +476,22 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
     /// Convert distance (degrees) to meters if needed
     /// </summary>
     /// <param name="threshold"></param>
-    /// <param name="unit"></param>
+    /// <param name="srid"></param>
     /// <returns></returns>
-    private static object ConvertDistanceToMetersIfNeeded(object threshold, object unit)
+    private static object ConvertDistanceToMetersIfNeeded(object threshold, int srid)
     {
         const double metersPerDegree = 111320.0;
-        const double yardsPerDegree = 121693;
-        
-        if (unit is not string s)
+
+        if (srid is not (28992 or 25831 or 3035 or 27700))
         {
             return threshold;
         }
         
-        if (s.Equals("m", StringComparison.OrdinalIgnoreCase))
+        if (double.TryParse(threshold.ToString(), out var parsed))
         {
-            if (threshold is double d)
-            {
-                return d / metersPerDegree;
-            }
-
-            if (double.TryParse(threshold.ToString(), out var parsed))
-            {
-                return parsed / metersPerDegree;
-            }
+            return parsed / metersPerDegree;
         }
-        
-        if (s.Equals("y", StringComparison.OrdinalIgnoreCase))
-        {
-            if (threshold is double d)
-            {
-                return d / yardsPerDegree;
-            }
 
-            if (double.TryParse(threshold.ToString(), out var parsed))
-            {
-                return parsed / yardsPerDegree;
-            }
-        }
-        
         return threshold;
     }
 }

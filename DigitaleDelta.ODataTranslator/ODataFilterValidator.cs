@@ -114,16 +114,6 @@ public class ODataFilterValidator(CsdlModel csdlModel, IEnumerable<ODataFunction
                 var expectedType = functionMap.ExpectedArgumentTypes[i];
                 var actualType   = GetExpressionEdmType(argument, entityType);
                 
-                if (functionName == "distance" && i == 1)
-                {
-                    // Example: Only allow "km" or "miles" as the second argument
-                    var value = argument.GetText().Trim('\'', '"');
-                    if (value != "m" && value != "d")
-                    {
-                        return (false, $"Invalid unit '{value}' for distance. Allowed: 'm' (meters), 'y' (yards), 'd' (degrees).");
-                    }
-                }
-
                 if (!string.Equals(expectedType, MapEdmToExpected(actualType), StringComparison.OrdinalIgnoreCase))
                 {
                     return (false, string.Format(ErrorMessages.invalidFunctionDataType, i + 1, functionName, actualType, expectedType));

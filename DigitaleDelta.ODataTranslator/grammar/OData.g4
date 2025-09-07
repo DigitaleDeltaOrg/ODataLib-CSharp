@@ -62,7 +62,7 @@ function
     | NOW LPAREN RPAREN
     | DATE LPAREN filterExpr RPAREN
     | TIME LPAREN filterExpr RPAREN
-    | DISTANCE LPAREN filterExpr COMMA filterExpr RPAREN
+    | DISTANCE LPAREN filterExpr RPAREN
     | INTERSECTS LPAREN STRING RPAREN
     | FLOOR LPAREN filterExpr COMMA filterExpr RPAREN
     | CEIL LPAREN filterExpr COMMA filterExpr RPAREN
