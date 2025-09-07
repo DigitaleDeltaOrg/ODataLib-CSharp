@@ -375,3 +375,7 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.csDigitaleDelta.OData.sln.DotSettings.user
+
+# Antlr generated
+*.interp
+*.tokens
