@@ -22,6 +22,7 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
@@ -50,5 +51,4 @@
     <ItemGroup>
       <ProjectReference Include="..\DigitaleDelta.Contracts\DigitaleDelta.Contracts.csproj" />
     </ItemGroup>
-    
 </Project>

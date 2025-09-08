@@ -260,9 +260,24 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
             if (left.SqlQuery != null && left.SqlQuery.Contains("distance", StringComparison.OrdinalIgnoreCase))
             {
                 var threshold = ExtractParameterValue(right.SqlQuery);
+                if (threshold is double thresholdValueDouble )
+                {
+                    if ((thresholdValueDouble is < -90 or > 90) && (srid is 4258 or 4326))
+                    {
+                        return (false, "Distance error", null);
+                    }
+                }
+
+                if (threshold is int thresholdValueInteger)
+                {
+                    if ((thresholdValueInteger is < -90 or > 90) && (srid is 4258 or 4326))
+                    {
+                        return (false, ErrorMessages.distanceOutOfRange, null);
+                    }
+                }
+                
                 var converted = ConvertDistanceToMetersIfNeeded(threshold, srid);
 
-                // If right.SqlQuery is a parameter, update its value
                 if (!string.IsNullOrEmpty(right.SqlQuery) && right.SqlQuery[0] == parameterPrefix && _parameters.ContainsKey(right.SqlQuery))
                 {
                     _parameters[right.SqlQuery] = converted;
@@ -284,7 +299,8 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
                 return operatorSymbol.ToLowerInvariant() switch
                 {
                     "eq" => (true, null, $"{left.SqlQuery} IS NULL"),
-                    "ne" => (true, null, $"{left.SqlQuery} IS NOT NULL")
+                    "ne" => (true, null, $"{left.SqlQuery} IS NOT NULL"),
+                    _ => (false, ErrorMessages.unknownOperator, string.Empty)
                 };
             }
             
@@ -298,14 +314,8 @@ public class ODataToSqlConverter(IEnumerable<ODataToSqlMap> propertyMaps, IEnume
             var left            = TryConvertFilterExpressionToSql(context.filterExpr(0));
             var right           = TryConvertFilterExpressionToSql(context.filterExpr(1));
             var logicalOperator = context.AND() != null ? "AND" : "OR";
-
-            var leftQuery = context.filterExpr(0).AND() != null || context.filterExpr(0).OR() != null
-                ? $"({left.SqlQuery})"
-                : left.SqlQuery;
-
-            var rightQuery = context.filterExpr(1).AND() != null || context.filterExpr(1).OR() != null
-                ? $"({right.SqlQuery})"
-                : right.SqlQuery;
+            var leftQuery = context.filterExpr(0).AND() != null || context.filterExpr(0).OR() != null ? $"({left.SqlQuery})" : left.SqlQuery;
+            var rightQuery = context.filterExpr(1).AND() != null || context.filterExpr(1).OR() != null ? $"({right.SqlQuery})" : right.SqlQuery;
 
             return (true, null, $"{leftQuery} {logicalOperator} {rightQuery}");
         }

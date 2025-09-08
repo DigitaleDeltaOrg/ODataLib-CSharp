@@ -24,6 +24,7 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
@@ -59,5 +60,4 @@
     <ItemGroup>
         <None Include="LICENSE.md" Pack="true" PackagePath=""/>
     </ItemGroup>
-
 </Project>
