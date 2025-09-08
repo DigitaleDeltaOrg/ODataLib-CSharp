@@ -29,12 +29,6 @@
         <!-- This is the key part for monorepo support -->
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <!-- This includes the README.md file from the repository root in the package.
-             Adjust the path '..\..\README.md' if your folder structure is different. -->
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
-    </ItemGroup>
     
     <ItemGroup>
         <None Include="LICENSE.md" Pack="true" PackagePath=""/>
