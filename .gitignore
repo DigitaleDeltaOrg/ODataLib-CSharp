@@ -379,3 +379,14 @@ __pycache__/
 # Antlr generated
 *.interp
 *.tokens
+
+# Don't include nuget config
+nuget.config
+
+# ANTLR temporary artifacts
+OData.interp
+OData.tokens
+ODataLexer.interp
+ODataLexer.tokens
+ODataVisitor.interp
+ODataVisitor.tokens
