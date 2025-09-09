@@ -7,3 +7,4 @@ The test suite covers core functionalities including OData parsing, SQL translat
 
 ```bash
 dotnet test
+```

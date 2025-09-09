@@ -7,14 +7,14 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>OData Writer for Digitale Delta</Title>
         <PackageId>DigitaleDelta.ODataWriter</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>EcoSys</Authors>
         <Company>EcoSys, Digitale Delta</Company>
         <Description>A .NET library designed to work with OData services within the Digitale Delta ecosystem. It provides a fast ODataWriter.</Description>
         <Copyright>Copyright (c) 2025 - EcoSys</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/DigitaleDelta/DigitaleDeltaODataLib</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/DigitaleDelta/DigitaleDeltaODataLib.git</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/DigitaleDeltaOrg/ODataLib-CSharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DigitaleDeltaOrg/ODataLib-CSharp.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>DigitaleDelta ODataTranslator</PackageTags>
         <PackageReleaseNotes>Initial release of the Digitale Delta /ODataWriter library.</PackageReleaseNotes>
@@ -34,10 +34,6 @@
     
     <ItemGroup>
       <PackageReference Include="GeoAPI.Core" Version="1.7.5" />
-      <PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="NetTopologySuite" Version="2.6.0" />
       <PackageReference Include="NetTopologySuite.Features" Version="2.2.0" />
       <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0" />
@@ -45,6 +41,11 @@
       <PackageReference Include="System.Text.Json" Version="9.0.7" />
     </ItemGroup>
 
+    <ItemGroup>
+        <!-- This includes the README.md file from the repository root in the package. -->
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    
     <ItemGroup>
       <Reference Include="GeoAPI">
         <HintPath>..\..\..\..\..\..\.nuget\packages\geoapi.core\1.7.5\lib\netstandard2.0\GeoAPI.dll</HintPath>

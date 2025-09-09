@@ -5,14 +5,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>DigitaleDelta.CsdlParser</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>EcoSys</Authors>
         <Company>EcoSys, Digitale Delta</Company>
         <Description>A .NET library designed to work with OData services within the Digitale Delta ecosystem. It provides a CSDL Parser.</Description>
         <Copyright>Copyright (c) 2025 - EcoSys</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageProjectUrl>https://github.com/DigitaleDelta/DigitaleDeltaODataLib</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/DigitaleDelta/DigitaleDeltaODataLib.git</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/DigitaleDeltaOrg/ODataLib-CSharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/DigitaleDeltaOrg/ODataLib-CSharp.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>DigitaleDelta OData CSDLParser</PackageTags>
         <PackageReleaseNotes>Initial release of the Digitale Delta CSDL Parser library.</PackageReleaseNotes>
@@ -26,6 +26,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <!-- This includes the README.md file from the repository root in the package. -->
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    
+    <ItemGroup>
         <!-- This is the key part for monorepo support -->
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     </ItemGroup>
@@ -35,10 +40,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     </ItemGroup>
 
