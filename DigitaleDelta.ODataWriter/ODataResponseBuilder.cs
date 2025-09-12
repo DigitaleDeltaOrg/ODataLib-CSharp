@@ -168,7 +168,7 @@ public class ODataResponseBuilder
         parts.RemoveAll(p => p.StartsWith("$skiptoken=", StringComparison.OrdinalIgnoreCase));
         parts.Add($"$skiptoken={_skipTokenToUse}");
         
-        var nextLink = $"{_baseUrl}/{_entitySetName}?" + string.Join("&", parts).Replace("?&", "?").Replace("&&", "&");
+        var nextLink = $"{_baseUrl}?" + string.Join("&", parts).Replace("?&", "?").Replace("&&", "&");
         
         return nextLink;
     }
